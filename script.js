@@ -15,6 +15,9 @@ document.getElementById('eta-form').addEventListener('submit', function(event) {
 
     let totalDrivingTime = distance / speed;
     let remainingDrivingTime = totalDrivingTime;
+    let calculationSteps = [];
+    
+    calculationSteps.push(`Total driving time needed: ${totalDrivingTime.toFixed(2)} hours`);
 
     let currentDateTime = new Date(startTime);
 
@@ -22,26 +25,44 @@ document.getElementById('eta-form').addEventListener('submit', function(event) {
     if (hoursLeft > 0) {
         let dailyDrivingTime = Math.min(remainingDrivingTime, hoursLeft);
         let totalDayTime = dailyDrivingTime + breakTime + preTripInspection + postTripInspection + fuelingTime;
-
         currentDateTime.setHours(currentDateTime.getHours() + totalDayTime);
         remainingDrivingTime -= dailyDrivingTime;
 
+        calculationSteps.push(`Day 1:`);
+        calculationSteps.push(`  - Driving time: ${dailyDrivingTime.toFixed(2)} hours`);
+        calculationSteps.push(`  - Total day time (including breaks, inspections, and fueling): ${totalDayTime.toFixed(2)} hours`);
+        calculationSteps.push(`  - Time after driving and activities: ${currentDateTime.toISOString()}`);
+
         if (remainingDrivingTime > 0) {
             currentDateTime.setHours(currentDateTime.getHours() + offDutyTime);
+            calculationSteps.push(`  - Off-duty time: ${offDutyTime} hours`);
+            calculationSteps.push(`  - Time after off-duty: ${currentDateTime.toISOString()}`);
         }
     }
 
+    let dayCount = 2;
     while (remainingDrivingTime > 0) {
         let dailyDrivingTime = Math.min(remainingDrivingTime, drivingHoursPerDay);
         let totalDayTime = dailyDrivingTime + breakTime + preTripInspection + postTripInspection + fuelingTime;
-
         currentDateTime.setHours(currentDateTime.getHours() + totalDayTime);
         remainingDrivingTime -= dailyDrivingTime;
 
+        calculationSteps.push(`Day ${dayCount}:`);
+        calculationSteps.push(`  - Driving time: ${dailyDrivingTime.toFixed(2)} hours`);
+        calculationSteps.push(`  - Total day time (including breaks, inspections, and fueling): ${totalDayTime.toFixed(2)} hours`);
+        calculationSteps.push(`  - Time after driving and activities: ${currentDateTime.toISOString()}`);
+
         if (remainingDrivingTime > 0) {
             currentDateTime.setHours(currentDateTime.getHours() + offDutyTime);
+            calculationSteps.push(`  - Off-duty time: ${offDutyTime} hours`);
+            calculationSteps.push(`  - Time after off-duty: ${currentDateTime.toISOString()}`);
         }
+
+        dayCount++;
     }
 
     document.getElementById('result').textContent = `ETA: ${currentDateTime.toISOString()}`;
+
+    const calculationDetails = document.getElementById('calculation-details');
+    calculationDetails.innerHTML = `<h2>Calculation Details</h2><pre>${calculationSteps.join('\n')}</pre>`;
 });
