@@ -83,7 +83,6 @@ a:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 300px;
     margin-top: 20px;
-    display: none;
 }
 
 #calculation-details h2 {
@@ -91,6 +90,7 @@ a:hover {
     color: #0066cc;
 }
 
-.hidden {
-    display: none;
+#calculation-details pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
