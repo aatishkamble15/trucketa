@@ -64,5 +64,17 @@ document.getElementById('eta-form').addEventListener('submit', function(event) {
     document.getElementById('result').textContent = `ETA: ${currentDateTime.toISOString()}`;
 
     const calculationDetails = document.getElementById('calculation-details');
-    calculationDetails.innerHTML = `<h2>Calculation Details</h2><pre>${calculationSteps.join('\n')}</pre>`;
+    calculationDetails.innerHTML = `<h2>Calculation Details</h2><p>${calculationSteps.join('</p><p>')}</p>`;
+});
+
+document.getElementById('toggle-details').addEventListener('click', function() {
+    const calculationDetails = document.getElementById('calculation-details');
+    const toggleButton = document.getElementById('toggle-details');
+    if (calculationDetails.classList.contains('hidden')) {
+        calculationDetails.classList.remove('hidden');
+        toggleButton.textContent = 'Hide Details';
+    } else {
+        calculationDetails.classList.add('hidden');
+        toggleButton.textContent = 'Show Details';
+    }
 });
