@@ -75,3 +75,22 @@ a:hover {
     list-style-type: disc;
     padding-left: 20px;
 }
+
+#calculation-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-top: 20px;
+}
+
+#calculation-details h2 {
+    margin-top: 0;
+    color: #0066cc;
+}
+
+#calculation-details pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
