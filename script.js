@@ -50,31 +50,4 @@ document.getElementById('eta-form').addEventListener('submit', function(event) {
         calculationSteps.push(`Day ${dayCount}:`);
         calculationSteps.push(`  - Driving time: ${dailyDrivingTime.toFixed(2)} hours`);
         calculationSteps.push(`  - Total day time (including breaks, inspections, and fueling): ${totalDayTime.toFixed(2)} hours`);
-        calculationSteps.push(`  - Time after driving and activities: ${currentDateTime.toISOString()}`);
-
-        if (remainingDrivingTime > 0) {
-            currentDateTime.setHours(currentDateTime.getHours() + offDutyTime);
-            calculationSteps.push(`  - Off-duty time: ${offDutyTime} hours`);
-            calculationSteps.push(`  - Time after off-duty: ${currentDateTime.toISOString()}`);
-        }
-
-        dayCount++;
-    }
-
-    document.getElementById('result').textContent = `ETA: ${currentDateTime.toISOString()}`;
-
-    const calculationDetails = document.getElementById('calculation-details');
-    calculationDetails.innerHTML = `<h2>Calculation Details</h2><p>${calculationSteps.join('</p><p>')}</p>`;
-});
-
-document.getElementById('toggle-details').addEventListener('click', function() {
-    const calculationDetails = document.getElementById('calculation-details');
-    const toggleButton = document.getElementById('toggle-details');
-    if (calculationDetails.classList.contains('hidden')) {
-        calculationDetails.classList.remove('hidden');
-        toggleButton.textContent = 'Hide Details';
-    } else {
-        calculationDetails.classList.add('hidden');
-        toggleButton.textContent = 'Show Details';
-    }
-});
+        calculationSteps.push(`  - Time after driving and activities
