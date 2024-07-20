@@ -34,9 +34,12 @@ document.getElementById('etaForm').addEventListener('submit', function(event) {
     // Add sleeper berth periods for each full driving day
     totalTimeHours += fullDrivingDays * SLEEPER_BERTH_HOURS;
 
-    // If there is remaining driving time, add additional sleeper berth and inspection time
+    // If there is remaining driving time beyond a full driving day, add additional sleeper berth and inspection time
     if (remainingDrivingTime > 0) {
-        totalTimeHours += SLEEPER_BERTH_HOURS + INSPECTION_TIME_HOURS_PER_DAY;
+        totalTimeHours += INSPECTION_TIME_HOURS_PER_DAY;
+        if (remainingDrivingTime > DAILY_DRIVING_LIMIT_HOURS) {
+            totalTimeHours += SLEEPER_BERTH_HOURS;
+        }
     }
 
     // Calculate ETA
@@ -54,7 +57,7 @@ document.getElementById('etaForm').addEventListener('submit', function(event) {
             <li>Travel Time: ${travelTimeHours.toFixed(2)} hours (${miles} miles / ${mph} mph)</li>
             <li>Fueling Time: ${FUELING_TIME_HOURS} hours</li>
             <li>30-Minute Break: ${travelTimeHours > 8 ? BREAK_TIME_HOURS : 0} hours (added if driving time exceeds 8 hours)</li>
-            <li>Sleeper Berth: ${fullDrivingDays * SLEEPER_BERTH_HOURS + (remainingDrivingTime > 0 ? SLEEPER_BERTH_HOURS : 0)} hours</li>
+            <li>Sleeper Berth: ${fullDrivingDays * SLEEPER_BERTH_HOURS + (remainingDrivingTime > DAILY_DRIVING_LIMIT_HOURS ? SLEEPER_BERTH_HOURS : 0)} hours</li>
             <li>Inspection Time: ${fullDrivingDays * INSPECTION_TIME_HOURS_PER_DAY + (remainingDrivingTime > 0 ? INSPECTION_TIME_HOURS_PER_DAY : 0)} hours</li>
         </ul>
         <p><strong>Total Time:</strong> ${totalTimeHours.toFixed(2)} hours</p>
