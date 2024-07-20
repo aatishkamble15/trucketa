@@ -1,68 +1,44 @@
-document.getElementById('eta-form').addEventListener('submit', function(event) {
+document.getElementById('etaForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const distance = parseFloat(document.getElementById('distance').value);
-    const speed = parseFloat(document.getElementById('speed').value);
-    const startTime = new Date(document.getElementById('start-time').value);
-    const hoursLeft = parseFloat(document.getElementById('hours-left').value);
+    const miles = parseFloat(document.getElementById('miles').value);
+    const mph = parseFloat(document.getElementById('mph').value);
+    const datetime = new Date(document.getElementById('datetime').value);
+    let hosRemaining = parseFloat(document.getElementById('hos').value);
 
-    const drivingHoursPerDay = 11;
-    const breakTime = 0.5; // 30 minutes in hours
-    const offDutyTime = 10; // 10 hours in hours
-    const preTripInspection = 0.25; // 15 minutes in hours
-    const postTripInspection = 0.25; // 15 minutes in hours
-    const fuelingTime = 0.5; // 30 minutes in hours
+    // Constants
+    const SLEEPER_BERTH_HOURS = 10;
+    const FUELING_TIME_HOURS = 2;
+    const BREAK_TIME_HOURS = 0.5; // 30 minutes
+    const INSPECTION_TIME_HOURS = 0.5; // 15 minutes + 15 minutes
 
-    let totalDrivingTime = distance / speed;
-    let remainingDrivingTime = totalDrivingTime;
-    let calculationSteps = [];
-    
-    calculationSteps.push(`Total driving time needed: ${totalDrivingTime.toFixed(2)} hours`);
+    // Calculate travel time
+    const travelTimeHours = miles / mph;
 
-    let currentDateTime = new Date(startTime);
+    // Start with basic total time including necessary breaks and inspections
+    let totalTimeHours = travelTimeHours + FUELING_TIME_HOURS + INSPECTION_TIME_HOURS;
 
-    // If driver has some hours left to drive before starting the trip
-    if (hoursLeft > 0) {
-        let dailyDrivingTime = Math.min(remainingDrivingTime, hoursLeft);
-        let totalDayTime = dailyDrivingTime + breakTime + preTripInspection + postTripInspection + fuelingTime;
-        currentDateTime.setHours(currentDateTime.getHours() + totalDayTime);
-        remainingDrivingTime -= dailyDrivingTime;
-
-        calculationSteps.push(`Day 1:`);
-        calculationSteps.push(`  - Driving time: ${dailyDrivingTime.toFixed(2)} hours`);
-        calculationSteps.push(`  - Total day time (including breaks, inspections, and fueling): ${totalDayTime.toFixed(2)} hours`);
-        calculationSteps.push(`  - Time after driving and activities: ${currentDateTime.toISOString()}`);
-
-        if (remainingDrivingTime > 0) {
-            currentDateTime.setHours(currentDateTime.getHours() + offDutyTime);
-            calculationSteps.push(`  - Off-duty time: ${offDutyTime} hours`);
-            calculationSteps.push(`  - Time after off-duty: ${currentDateTime.toISOString()}`);
-        }
+    // Add 30-minute break if driving exceeds 8 hours
+    if (travelTimeHours > 8) {
+        totalTimeHours += BREAK_TIME_HOURS;
     }
 
-    let dayCount = 2;
-    while (remainingDrivingTime > 0) {
-        let dailyDrivingTime = Math.min(remainingDrivingTime, drivingHoursPerDay);
-        let totalDayTime = dailyDrivingTime + breakTime + preTripInspection + postTripInspection + fuelingTime;
-        currentDateTime.setHours(currentDateTime.getHours() + totalDayTime);
-        remainingDrivingTime -= dailyDrivingTime;
+    // Add 10-hour sleeper berth period
+    totalTimeHours += SLEEPER_BERTH_HOURS;
 
-        calculationSteps.push(`Day ${dayCount}:`);
-        calculationSteps.push(`  - Driving time: ${dailyDrivingTime.toFixed(2)} hours`);
-        calculationSteps.push(`  - Total day time (including breaks, inspections, and fueling): ${totalDayTime.toFixed(2)} hours`);
-        calculationSteps.push(`  - Time after driving and activities: ${currentDateTime.toISOString()}`);
+    // Adjust total time based on remaining HOS hours
+    const totalHours = Math.max(totalTimeHours, hosRemaining);
 
-        if (remainingDrivingTime > 0) {
-            currentDateTime.setHours(currentDateTime.getHours() + offDutyTime);
-            calculationSteps.push(`  - Off-duty time: ${offDutyTime} hours`);
-            calculationSteps.push(`  - Time after off-duty: ${currentDateTime.toISOString()}`);
-        }
+    // Calculate ETA
+    const eta = new Date(datetime.getTime() + totalHours * 60 * 60 * 1000);
 
-        dayCount++;
-    }
+    // Format ETA
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    const etaFormatted = eta.toLocaleString('en-US', options);
 
-    document.getElementById('result').textContent = `ETA: ${currentDateTime.toISOString()}`;
-
-    const calculationDetails = document.getElementById('calculation-details');
-    calculationDetails.innerHTML = `<h2>Calculation Details</h2><p>${calculationSteps.join('</p><p>')}</p>`;
+    // Display results
+    document.getElementById('result').innerHTML = `
+        <p><strong>Estimated Time of Arrival (ETA):</strong> ${etaFormatted}</p>
+        <p><strong>Explanation:</strong> The ETA was calculated based on the miles to travel, speed, and additional time for sleeper berth (10 hours), fueling (2 hours), and inspections (30 minutes total). A 30-minute break was added if driving time exceeded 8 hours. The total time was adjusted based on the remaining HOS hours.</p>
+    `;
 });
